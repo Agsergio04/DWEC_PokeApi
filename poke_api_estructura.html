@@ -1,9 +1,81 @@
-<!DOCTYPE html charset="UTF-8">
-<html>
-    <head>
-
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="poke_api_estilo.css">
+  <title>PokeApi</title>
+</head>
+<body>
+  <main class="pokedex">
+    <header class="pokedex__header">
+      <h1 class="pokedex__title">Pokedex</h1>
+    </header>
+    
+    <section class="pokedex__search">
+      <form class="search-form" id="searchForm" autocomplete="off">
+        <div class="autocomplete-container">
+          <input 
+            type="text"
+            class="search-form__input"
+            id="pokemonInput"
+            placeholder="Escribe el nombre o ID de un Pokémon..."
+            autocomplete="off"
+          >
+          <button type="submit" class="search-form__button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+          <ul class="autocomplete-list" id="autocompleteList"></ul>
+        </div>
+      </form>
+    </section>
+    
+    <section class="pokedex__results">
+      <div class="pokemon-card pokemon-card--hidden" id="pokemonCard">
+        <div class="pokemon-card__header">
+          <h2 class="pokemon-card__name" id="pokemonName"></h2>
+          <span class="pokemon-card__id" id="pokemonId"></span>
+        </div>
         
-    </body>
+        <div class="pokemon-card__image-container">
+          <img 
+            class="pokemon-card__image" 
+            id="pokemonImage" 
+            src="" 
+            alt="Imagen del Pokémon"
+          >
+        </div>
+        
+        <div class="pokemon-card__types" id="pokemonTypes"></div>
+        
+        <div class="pokemon-card__info">
+          <div class="pokemon-info">
+            <div class="pokemon-info__item">
+              <span class="pokemon-info__label">Peso:</span>
+              <span class="pokemon-info__value" id="pokemonWeight"></span>
+            </div>
+            <div class="pokemon-info__item">
+              <span class="pokemon-info__label">Altura:</span>
+              <span class="pokemon-info__value" id="pokemonHeight"></span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="pokemon-card__stats">
+          <h3 class="pokemon-card__stats-title">Estadisticas</h3>
+          <div class="pokemon-stats" id="pokemonStats"></div>
+        </div>
+      </div>
+      
+      <div class="error-message error-message--hidden" id="errorMessage">
+        <p class="error-message__text">No se encontro el Pokemon. Intenta con otro nombre o ID.</p>
+      </div>
+    </section>
+  </main>
+  
+  <script src="poke_api_logica.js"></script>
+</body>
 </html>
