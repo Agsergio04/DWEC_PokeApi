@@ -1,3 +1,961 @@
+# 📝 PLANTILLAS DE ISSUES PARA GITHUB
+
+## 🔴 ISSUE #1: Crear Servicio GitIngest
+
+**Título:** `[Backend] Implementar servicio de integración con GitIngest`
+
+**Labels:** `backend`, `enhancement`, `high-priority`
+
+**Milestone:** `Sprint 1 - Backend Core`
+
+**Assignees:** `@tu-usuario`
+
+---
+
+### 📋 Descripción
+
+Crear servicio backend para integración con GitIngest API que permita analizar repositorios de GitHub y extraer su estructura, archivos, código y metadatos.
+
+### 🎯 Objetivos
+
+- [ ] Crear archivo `/backend/services/gitingestService.js`
+- [ ] Implementar parseador de URLs de GitHub
+- [ ] Implementar llamada a GitIngest API
+- [ ] Procesar datos del repositorio (estructura, archivos, dependencias)
+- [ ] Detectar lenguajes de programación
+- [ ] Identificar tecnologías/frameworks
+- [ ] Extraer archivos clave (package.json, README, etc.)
+- [ ] Manejar errores y timeouts
+
+### 📝 Tareas Específicas
+
+#### 1. Configuración Inicial
+```bash
+cd backend
+npm install axios
+```
+
+#### 2. Variables de Entorno
+Añadir a `/backend/.env`:
+```env
+GITINGEST_API_URL=https://gitingest.com/api
+GITINGEST_TIMEOUT=30000
+GITHUB_TOKEN=tu_token_opcional
+```
+
+#### 3. Métodos a Implementar
+- `analyzeRepository(repoUrl)` - Método principal
+- `callGitIngestAPI(owner, repo)` - Llamada HTTP
+- `parseGitHubUrl(url)` - Parser de URLs
+- `processRepositoryData(rawData)` - Procesador
+- `extractLanguages(languagesData)` - Extractor de lenguajes
+- `detectTechnologies(files)` - Detector de frameworks
+- `extractDependencies(files)` - Extractor de dependencias
+
+### 🧪 Criterios de Aceptación
+
+- [ ] El servicio puede parsear URLs de GitHub correctamente
+- [ ] Se conecta exitosamente a GitIngest API
+- [ ] Extrae y procesa todos los metadatos del repositorio
+- [ ] Detecta correctamente lenguajes y tecnologías
+- [ ] Maneja errores de API (404, timeout, etc.)
+- [ ] Incluye logs informativos en consola
+- [ ] El código está documentado con JSDoc
+
+### 🔗 Referencias
+
+- Documentación GitIngest: [enlace]
+- Guía de implementación: `GUIA_IMPLEMENTACION_GITINGEST.md` (Paso 2)
+
+### 💡 Notas Técnicas
+
+- Usar `axios` para llamadas HTTP
+- Timeout de 30 segundos por defecto
+- Excluir carpetas: `node_modules`, `.git`, `dist`, `build`
+- Limitar tamaño de archivos a 100KB
+- Procesar máximo 20 archivos por análisis
+
+---
+
+## 🔴 ISSUE #2: Crear Servicio de Generación de Preguntas con IA
+
+**Título:** `[Backend] Implementar generación de preguntas contextuales con Gemini AI`
+
+**Labels:** `backend`, `AI`, `enhancement`, `high-priority`
+
+**Milestone:** `Sprint 1 - Backend Core`
+
+---
+
+### 📋 Descripción
+
+Crear servicio que utilice Google Gemini AI para generar preguntas técnicas contextuales basadas en el análisis del código obtenido de GitIngest.
+
+### 🎯 Objetivos
+
+- [ ] Crear archivo `/backend/services/questionGeneratorService.js`
+- [ ] Implementar generación de preguntas con Gemini
+- [ ] Construir prompts contextuales ricos
+- [ ] Seleccionar archivos relevantes según tipo de análisis
+- [ ] Incluir snippets de código en las preguntas
+- [ ] Generar puntos esperados para buenas respuestas
+
+### 📝 Tareas Específicas
+
+#### 1. Configuración
+Asegurar que existe en `.env`:
+```env
+GEMINI_API_KEY=tu_clave_api
+```
+
+#### 2. Métodos a Implementar
+- `generateQuestionsFromRepository(repositoryData, options)` - Principal
+- `buildPrompt(repoData, analysisType, difficulty, language, count)` - Constructor de prompt
+- `selectRelevantFiles(fileContents, analysisType)` - Selector de archivos
+
+#### 3. Tipos de Análisis Soportados
+- `code_quality` - Calidad de código
+- `architecture` - Arquitectura
+- `security` - Seguridad
+- `best_practices` - Mejores prácticas
+- `testing` - Testing
+- `performance` - Rendimiento
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Genera 10 preguntas por defecto (configurable)
+- [ ] Las preguntas incluyen código real del repositorio
+- [ ] Especifica ruta del archivo y líneas de código
+- [ ] Categoriza preguntas correctamente
+- [ ] Incluye contexto sobre por qué el código es importante
+- [ ] Lista puntos esperados en respuestas correctas
+- [ ] Soporta múltiples idiomas (ES, EN, FR, DE)
+- [ ] Maneja errores de API de Gemini
+
+### 📊 Estructura de Salida
+
+```json
+{
+  "questions": [
+    {
+      "question": "¿Por qué se usa X patrón en este archivo?",
+      "filePath": "src/services/UserService.js",
+      "codeSnippet": "class UserService {...}",
+      "category": "architecture",
+      "difficulty": "medium",
+      "context": "Demuestra patrón de inyección de dependencias",
+      "expectedPoints": [
+        "Testabilidad",
+        "Bajo acoplamiento",
+        "Flexibilidad"
+      ]
+    }
+  ]
+}
+```
+
+### 🔗 Referencias
+
+- Guía de implementación: `GUIA_IMPLEMENTACION_GITINGEST.md` (Paso 3)
+- Documentación Gemini: [enlace]
+
+---
+
+## 🔴 ISSUE #3: Crear Modelo RepositoryAnalysis
+
+**Título:** `[Backend] Crear modelo de datos RepositoryAnalysis para MongoDB`
+
+**Labels:** `backend`, `database`, `high-priority`
+
+**Milestone:** `Sprint 1 - Backend Core`
+
+---
+
+### 📋 Descripción
+
+Crear modelo Mongoose para almacenar análisis de repositorios de GitHub, reemplazando el modelo Interview existente.
+
+### 🎯 Objetivos
+
+- [ ] Crear archivo `/backend/models/RepositoryAnalysis.js`
+- [ ] Definir schema completo
+- [ ] Configurar relaciones con User y Questions
+- [ ] Añadir validaciones
+- [ ] Crear índices para búsquedas eficientes
+
+### 📝 Estructura del Modelo
+
+```javascript
+{
+  userId: ObjectId (ref: User),
+  repositoryUrl: String (required),
+  repositoryName: String (required),
+  repositoryOwner: String (required),
+  repositoryLanguage: String,
+  analysisType: String (enum: ['code_quality', 'architecture', 'security', ...]),
+  difficulty: String (enum: ['beginner', 'intermediate', 'advanced']),
+  language: String (enum: ['en', 'es', 'fr', 'de']),
+  status: String (enum: ['analyzing', 'in_progress', 'completed', 'paused']),
+  gitingestData: Object (datos completos de GitIngest),
+  codeStructure: {
+    files: Number,
+    folders: Number,
+    totalLines: Number,
+    totalSize: Number
+  },
+  questions: [ObjectId (ref: Question)],
+  currentQuestionIndex: Number,
+  totalScore: Number (0-100),
+  feedback: String,
+  statistics: Object,
+  createdAt: Date,
+  updatedAt: Date,
+  analyzedAt: Date,
+  completedAt: Date
+}
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] El modelo se crea correctamente
+- [ ] Todas las validaciones funcionan
+- [ ] Relaciones con otros modelos están configuradas
+- [ ] Se pueden crear análisis de prueba
+- [ ] Los índices mejoran performance de búsquedas
+
+### 🔗 Referencias
+
+- Modelo Interview existente: `/backend/models/Interview.js`
+- Guía de migración: `RESUMEN_FUNCIONALIDADES_Y_MIGRACION.md` (Issue #1)
+
+---
+
+## 🔴 ISSUE #4: Actualizar Modelo Question
+
+**Título:** `[Backend] Adaptar modelo Question para análisis de código`
+
+**Labels:** `backend`, `database`, `medium-priority`
+
+**Milestone:** `Sprint 1 - Backend Core`
+
+---
+
+### 📋 Descripción
+
+Actualizar modelo Question para incluir campos específicos de análisis de código (snippets, rutas de archivos, contexto).
+
+### 🎯 Objetivos
+
+- [ ] Modificar `/backend/models/Question.js`
+- [ ] Añadir campos nuevos
+- [ ] Mantener retrocompatibilidad si es necesario
+- [ ] Actualizar validaciones
+
+### 📝 Nuevos Campos a Añadir
+
+```javascript
+{
+  repositoryAnalysisId: ObjectId (ref: RepositoryAnalysis), // Reemplaza interviewId
+  codeSnippet: String, // Fragmento de código relevante
+  filePath: String, // Ruta del archivo en el repo
+  lineStart: Number, // Línea de inicio (opcional)
+  lineEnd: Number, // Línea de fin (opcional)
+  context: String, // Contexto sobre por qué este código importa
+  expectedPoints: [String] // Puntos clave que debería cubrir una buena respuesta
+  // ... mantener campos existentes
+}
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Modelo actualizado correctamente
+- [ ] Migración de datos no rompe preguntas existentes
+- [ ] Nuevos campos son opcionales
+- [ ] Validaciones funcionan correctamente
+
+---
+
+## 🔴 ISSUE #5: Actualizar Modelo Response
+
+**Título:** `[Backend] Adaptar modelo Response para evaluación de código`
+
+**Labels:** `backend`, `database`, `medium-priority`
+
+**Milestone:** `Sprint 1 - Backend Core`
+
+---
+
+### 📋 Descripción
+
+Actualizar modelo Response para incluir evaluación específica de comprensión de código y sugerencias de mejora.
+
+### 🎯 Objetivos
+
+- [ ] Modificar `/backend/models/Response.js`
+- [ ] Añadir nuevos campos de evaluación
+- [ ] Actualizar estructura de análisis
+
+### 📝 Campos a Modificar/Añadir
+
+```javascript
+{
+  repositoryAnalysisId: ObjectId (ref: RepositoryAnalysis),
+  codeImprovement: String, // Sugerencia de mejora del código
+  analysis: {
+    correctness: Number (0-100), // Nuevo
+    completeness: Number (0-100), // Nuevo
+    codeQuality: Number (0-100), // Nuevo
+    bestPractices: [String],
+    issues: [String] // Errores/misconceptions detectadas
+  }
+  // ... mantener campos existentes
+}
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Modelo actualizado
+- [ ] Campos de análisis de código funcionan
+- [ ] Retrocompatibilidad mantenida
+
+---
+
+## 🟡 ISSUE #6: Crear Controlador RepositoryAnalysis
+
+**Título:** `[Backend] Implementar controlador de análisis de repositorios`
+
+**Labels:** `backend`, `controller`, `high-priority`
+
+**Milestone:** `Sprint 2 - Backend Completo`
+
+---
+
+### 📋 Descripción
+
+Crear controlador que orqueste el análisis completo: GitIngest → IA → Base de datos.
+
+### 🎯 Objetivos
+
+- [ ] Crear `/backend/controllers/repositoryAnalysisController.js`
+- [ ] Implementar endpoint de análisis
+- [ ] Implementar CRUD completo
+- [ ] Integrar servicios de GitIngest y IA
+- [ ] Manejar errores correctamente
+
+### 📝 Endpoints a Implementar
+
+#### POST `/api/repository-analysis/analyze`
+Analiza un repositorio completo
+```javascript
+Body: {
+  repositoryUrl: String,
+  analysisType: String,
+  difficulty: String,
+  language: String
+}
+```
+
+#### GET `/api/repository-analysis`
+Lista análisis del usuario
+
+#### GET `/api/repository-analysis/:id`
+Obtiene análisis específico con preguntas
+
+#### PUT `/api/repository-analysis/:id/status`
+Actualiza estado (in_progress → completed)
+
+#### DELETE `/api/repository-analysis/:id`
+Elimina análisis y datos relacionados
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Todos los endpoints funcionan
+- [ ] Integración con GitIngest exitosa
+- [ ] Preguntas se generan correctamente
+- [ ] Datos se guardan en BD
+- [ ] Manejo de errores robusto
+- [ ] Logs informativos en consola
+- [ ] Respuestas HTTP apropiadas
+
+### 🔗 Referencias
+
+- Guía: `GUIA_IMPLEMENTACION_GITINGEST.md` (Paso 4)
+
+---
+
+## 🟡 ISSUE #7: Crear Servicio de Evaluación de Respuestas
+
+**Título:** `[Backend] Implementar evaluación de respuestas con contexto de código`
+
+**Labels:** `backend`, `AI`, `medium-priority`
+
+**Milestone:** `Sprint 2 - Backend Completo`
+
+---
+
+### 📋 Descripción
+
+Crear servicio que evalúe las respuestas del usuario considerando el código real del repositorio.
+
+### 🎯 Objetivos
+
+- [ ] Crear `/backend/services/responseEvaluatorService.js`
+- [ ] Evaluar correctness, completeness, codeQuality
+- [ ] Generar feedback educativo
+- [ ] Sugerir mejoras de código específicas
+- [ ] Identificar best practices
+
+### 📝 Método Principal
+
+```javascript
+evaluateResponse(question, userResponse, repositoryContext)
+```
+
+### 📊 Estructura de Salida
+
+```json
+{
+  "correctness": 85,
+  "completeness": 75,
+  "codeQuality": 80,
+  "overallScore": 80,
+  "feedback": "Excelente respuesta que demuestra...",
+  "strengths": ["Identifica X", "Menciona Y"],
+  "improvements": ["Podrías añadir Z"],
+  "bestPractices": ["Práctica A", "Práctica B"],
+  "codeImprovement": "// Ejemplo mejorado...",
+  "issues": ["Error conceptual en X"]
+}
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Evaluación precisa y contextual
+- [ ] Feedback constructivo y educativo
+- [ ] Sugerencias de código específicas
+- [ ] Manejo de errores de API
+
+---
+
+## 🟡 ISSUE #8: Actualizar Controlador de Respuestas
+
+**Título:** `[Backend] Adaptar responseController para análisis de código`
+
+**Labels:** `backend`, `controller`, `medium-priority`
+
+**Milestone:** `Sprint 2 - Backend Completo`
+
+---
+
+### 📋 Descripción
+
+Modificar submitResponse para incluir contexto de código en la evaluación.
+
+### 🎯 Objetivos
+
+- [ ] Modificar `/backend/controllers/responseController.js`
+- [ ] Integrar servicio de evaluación
+- [ ] Incluir contexto del repositorio
+- [ ] Actualizar estructura de análisis
+
+### 📝 Cambios en submitResponse
+
+```javascript
+// Añadir contexto
+const repositoryContext = {
+  repositoryName: analysis.repositoryName,
+  repositoryLanguage: analysis.repositoryLanguage,
+  codeSnippet: question.codeSnippet,
+  filePath: question.filePath
+};
+
+// Evaluar con contexto
+const evaluation = await responseEvaluatorService.evaluateResponse(
+  question,
+  userResponse,
+  repositoryContext
+);
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Respuestas se evalúan con contexto de código
+- [ ] Se guardan todas las métricas de evaluación
+- [ ] Sugerencias de mejora se almacenan
+- [ ] Funcionamiento correcto end-to-end
+
+---
+
+## 🟢 ISSUE #9: Crear Rutas API de Repository Analysis
+
+**Título:** `[Backend] Configurar rutas para análisis de repositorios`
+
+**Labels:** `backend`, `routes`, `high-priority`
+
+**Milestone:** `Sprint 2 - Backend Completo`
+
+---
+
+### 📋 Descripción
+
+Crear archivo de rutas y registrarlo en el servidor principal.
+
+### 🎯 Objetivos
+
+- [ ] Crear `/backend/routes/repositoryAnalysis.js`
+- [ ] Registrar rutas en `/backend/server.js`
+- [ ] Aplicar middleware de autenticación
+- [ ] Configurar validaciones
+
+### 📝 Tareas
+
+1. Crear archivo de rutas con todos los endpoints
+2. Importar controlador
+3. Aplicar middleware `auth`
+4. Registrar en `server.js`:
+```javascript
+const repositoryAnalysisRoutes = require('./routes/repositoryAnalysis');
+app.use('/api/repository-analysis', repositoryAnalysisRoutes);
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Todas las rutas funcionan
+- [ ] Autenticación requerida
+- [ ] Validaciones aplicadas
+- [ ] Tests de endpoints pasan
+
+---
+
+## 🎨 ISSUE #10: Crear Servicio API Frontend
+
+**Título:** `[Frontend] Implementar servicio de comunicación con backend`
+
+**Labels:** `frontend`, `api`, `high-priority`
+
+**Milestone:** `Sprint 3 - Frontend Core`
+
+---
+
+### 📋 Descripción
+
+Crear servicio frontend para comunicación con endpoints de análisis de repositorios.
+
+### 🎯 Objetivos
+
+- [ ] Crear `/frontend/src/api/repositoryAnalysisService.js`
+- [ ] Exportar en `/frontend/src/api/index.js`
+- [ ] Usar instancia axios existente
+
+### 📝 Métodos a Implementar
+
+```javascript
+export const repositoryAnalysisService = {
+  analyzeRepository: (data) => api.post('/repository-analysis/analyze', data),
+  getAnalyses: () => api.get('/repository-analysis'),
+  getAnalysis: (id) => api.get(`/repository-analysis/${id}`),
+  updateStatus: (id, data) => api.put(`/repository-analysis/${id}/status`, data),
+  deleteAnalysis: (id) => api.delete(`/repository-analysis/${id}`)
+};
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Todos los métodos funcionan
+- [ ] Manejo de errores correcto
+- [ ] Tokens de autenticación incluidos
+- [ ] Exportado correctamente
+
+---
+
+## 🎨 ISSUE #11: Crear Hook useRepositoryAnalysis
+
+**Título:** `[Frontend] Implementar hook personalizado para análisis`
+
+**Labels:** `frontend`, `hooks`, `medium-priority`
+
+**Milestone:** `Sprint 3 - Frontend Core`
+
+---
+
+### 📋 Descripción
+
+Crear hook personalizado que maneje la lógica de análisis de repositorios.
+
+### 🎯 Objetivos
+
+- [ ] Crear `/frontend/src/hooks/useRepositoryAnalysis.js`
+- [ ] Manejar estados de loading
+- [ ] Integrar toasts de notificación
+- [ ] Validar inputs
+
+### 📝 Funcionalidad
+
+```javascript
+export const useRepositoryAnalysis = () => {
+  const [loading, setLoading] = useState(false);
+  
+  const analyzeRepository = async (formData) => {
+    // Validación
+    // Llamada a API
+    // Notificaciones
+    // Retorno de datos
+  };
+  
+  return { loading, analyzeRepository };
+};
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Hook funciona correctamente
+- [ ] Validación de URLs de GitHub
+- [ ] Notificaciones apropiadas
+- [ ] Estado de loading manejado
+
+---
+
+## 🎨 ISSUE #12: Crear Página Repository Analysis
+
+**Título:** `[Frontend] Implementar página de análisis de repositorios`
+
+**Labels:** `frontend`, `UI`, `high-priority`
+
+**Milestone:** `Sprint 3 - Frontend Core`
+
+---
+
+### 📋 Descripción
+
+Crear página principal donde usuarios ingresan URL de GitHub y configuran análisis.
+
+### 🎯 Objetivos
+
+- [ ] Crear `/frontend/src/pages/RepositoryAnalysis.jsx`
+- [ ] Formulario de análisis
+- [ ] Lista de análisis previos
+- [ ] Integrar con hook personalizado
+- [ ] Estilos responsive
+
+### 📝 Componentes del Formulario
+
+- Input URL de GitHub (validación)
+- Select tipo de análisis
+- Select dificultad
+- Select idioma
+- Botón submit (con loading)
+
+### 📝 Lista de Análisis
+
+- Cards con información del repo
+- Nombre y owner
+- Lenguaje principal
+- Estado
+- Acciones (ver, eliminar)
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Formulario funcional
+- [ ] Validación de URLs
+- [ ] Lista de análisis previos
+- [ ] Navegación a sesión de análisis
+- [ ] Responsive design
+- [ ] Estilos consistentes
+
+---
+
+## 🎨 ISSUE #13: Crear Página Analysis Session
+
+**Título:** `[Frontend] Implementar sesión interactiva de análisis`
+
+**Labels:** `frontend`, `UI`, `high-priority`
+
+**Milestone:** `Sprint 3 - Frontend Core`
+
+---
+
+### 📋 Descripción
+
+Crear página donde usuarios ven preguntas con código y responden.
+
+### 🎯 Objetivos
+
+- [ ] Crear `/frontend/src/pages/AnalysisSession.jsx`
+- [ ] Instalar `react-syntax-highlighter`
+- [ ] Mostrar código con syntax highlighting
+- [ ] Formulario de respuesta
+- [ ] Navegación entre preguntas
+- [ ] Mostrar feedback de IA
+
+### 📝 Componentes Principales
+
+#### Header del Repositorio
+- Nombre del repo
+- Owner
+- Lenguaje principal
+- Tecnologías detectadas
+
+#### Barra de Progreso
+- Preguntas respondidas
+- Progreso visual
+
+#### Sección de Pregunta
+- Texto de la pregunta
+- Categoría y dificultad
+- Ruta del archivo
+- Código con syntax highlighting
+- Contexto de la pregunta
+
+#### Área de Respuesta
+- Textarea para respuesta
+- Botón guardar
+- Estado de guardado
+
+#### Feedback de IA (si respondió)
+- Puntuación general
+- Correctness, completeness, codeQuality
+- Strengths y improvements
+- Sugerencia de mejora de código
+- Best practices relacionadas
+
+#### Navegación
+- Botón anterior
+- Botón siguiente
+- Botón completar análisis
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Syntax highlighting funcional
+- [ ] Navegación entre preguntas
+- [ ] Guardado de respuestas
+- [ ] Mostrar feedback correctamente
+- [ ] Completar análisis actualiza estado
+- [ ] Responsive design
+- [ ] Loading states apropiados
+
+### 🔗 Dependencias
+
+```bash
+npm install react-syntax-highlighter
+```
+
+---
+
+## 🟢 ISSUE #14: Actualizar Navegación y Rutas
+
+**Título:** `[Frontend] Configurar rutas para nuevas páginas`
+
+**Labels:** `frontend`, `routing`, `medium-priority`
+
+**Milestone:** `Sprint 3 - Frontend Core`
+
+---
+
+### 📋 Descripción
+
+Actualizar React Router con nuevas rutas y navegación.
+
+### 🎯 Objetivos
+
+- [ ] Actualizar `/frontend/src/App.js`
+- [ ] Añadir rutas de análisis
+- [ ] Actualizar menú de navegación
+- [ ] Proteger rutas con autenticación
+
+### 📝 Nuevas Rutas
+
+```javascript
+<Route path="/repository-analysis" element={<RepositoryAnalysis />} />
+<Route path="/analysis/:analysisId" element={<AnalysisSession />} />
+```
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Rutas funcionan correctamente
+- [ ] Navegación intuitiva
+- [ ] Rutas protegidas con auth
+
+---
+
+## 🟢 ISSUE #15: Actualizar Página Home
+
+**Título:** `[Frontend] Adaptar landing page para nuevo concepto`
+
+**Labels:** `frontend`, `UI`, `content`, `low-priority`
+
+**Milestone:** `Sprint 4 - Frontend Completo`
+
+---
+
+### 📋 Descripción
+
+Actualizar textos e imágenes de la página de inicio para reflejar análisis de código.
+
+### 🎯 Objetivos
+
+- [ ] Modificar `/frontend/src/pages/Home.jsx`
+- [ ] Actualizar hero section
+- [ ] Cambiar características mostradas
+- [ ] Actualizar pricing
+- [ ] Nuevos íconos/imágenes
+
+### 📝 Nuevos Textos
+
+**Hero:**
+- "Mejora tus habilidades de Code Review con IA"
+- "Analiza repositorios de GitHub y recibe preguntas inteligentes..."
+
+**Features:**
+- 🔍 Análisis Automático de Código
+- 🤖 Preguntas Generadas por IA
+- 📊 Reportes de Calidad
+- 🚀 Recomendaciones de Best Practices
+
+**Pricing:**
+- Free: 5 análisis/mes, repos públicos
+- Premium: Análisis ilimitados, repos privados, reportes
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Textos actualizados
+- [ ] Íconos apropiados
+- [ ] Links funcionan
+- [ ] Diseño consistente
+
+---
+
+## 🟢 ISSUE #16: Actualizar Dashboard
+
+**Título:** `[Frontend] Adaptar dashboard para métricas de código`
+
+**Labels:** `frontend`, `UI`, `medium-priority`
+
+**Milestone:** `Sprint 4 - Frontend Completo`
+
+---
+
+### 📋 Descripción
+
+Actualizar dashboard para mostrar estadísticas de análisis de repositorios.
+
+### 🎯 Objetivos
+
+- [ ] Modificar `/frontend/src/pages/Dashboard.jsx`
+- [ ] Nuevas estadísticas
+- [ ] Gráficos de lenguajes
+- [ ] Repositorios recientes
+
+### 📝 Nuevas Métricas
+
+- Total de repositorios analizados
+- Calidad de código promedio
+- Análisis completados
+- Lenguajes más analizados
+- Áreas de mejora comunes
+
+### 🧪 Criterios de Aceptación
+
+- [ ] Métricas correctas
+- [ ] Gráficos visuales
+- [ ] Performance optimizado
+
+---
+
+## 📊 RESUMEN DE ISSUES
+
+### Sprint 1 - Backend Core (Issues #1-5)
+**Duración:** 2 semanas  
+**Issues:** #1, #2, #3, #4, #5
+
+### Sprint 2 - Backend Completo (Issues #6-9)
+**Duración:** 2 semanas  
+**Issues:** #6, #7, #8, #9
+
+### Sprint 3 - Frontend Core (Issues #10-14)
+**Duración:** 2-3 semanas  
+**Issues:** #10, #11, #12, #13, #14
+
+### Sprint 4 - Frontend Completo (Issues #15-16)
+**Duración:** 1 semana  
+**Issues:** #15, #16
+
+---
+
+## 🏷️ LABELS SUGERIDAS
+
+Crear estas labels en tu repositorio:
+
+- `backend` - Desarrollo backend
+- `frontend` - Desarrollo frontend
+- `database` - Modelos y BD
+- `AI` - Integración con IA
+- `API` - Endpoints y servicios
+- `UI` - Interfaz de usuario
+- `high-priority` - Prioridad alta
+- `medium-priority` - Prioridad media
+- `low-priority` - Prioridad baja
+- `enhancement` - Nueva funcionalidad
+- `bug` - Error a corregir
+- `documentation` - Documentación
+
+---
+
+## 📝 PLANTILLA GENÉRICA DE ISSUE
+
+```markdown
+**Título:** [Área] Descripción breve
+
+**Labels:** label1, label2, label3
+
+**Milestone:** Sprint X
+
+**Assignees:** @usuario
+
+---
+
+### 📋 Descripción
+Descripción detallada de la tarea...
+
+### 🎯 Objetivos
+- [ ] Objetivo 1
+- [ ] Objetivo 2
+- [ ] Objetivo 3
+
+### 📝 Tareas Específicas
+1. Tarea 1
+2. Tarea 2
+3. Tarea 3
+
+### 🧪 Criterios de Aceptación
+- [ ] Criterio 1
+- [ ] Criterio 2
+- [ ] Criterio 3
+
+### 🔗 Referencias
+- Documento X
+- Issue relacionado #Y
+- Link Z
+
+### 💡 Notas Técnicas
+- Nota importante 1
+- Nota importante 2
+```
+
+---
+
+## 🚀 INSTRUCCIONES DE USO
+
+1. **Copia cada issue** en tu repositorio de GitHub
+2. **Asigna labels** apropiadas
+3. **Crea milestones** por sprint
+4. **Asigna responsables**
+5. **Organiza en Projects** (opcional)
+6. **Trackea progreso** con checkboxes
+
+¡Listo para empezar a crear issues! 🎉
+
+
+      
       analysis.completedAt = Date.now();
       // Calcular puntuación total
       const Response = require('../models/Response');
