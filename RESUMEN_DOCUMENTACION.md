@@ -134,3 +134,371 @@ Script para poblar la base de datos con usuarios de prueba y sus suscripciones. 
 - **PayPal API**: Procesamiento de pagos
 - **Helmet**: Seguridad HTTP
 - **Rate Limiting**: Protección contra abuso
+
+# 📋 Resumen del Frontend - Archivos JavaScript/JSX
+
+## 🚀 Archivos Principales
+
+### **index.js**
+Punto de entrada de React. Renderiza el componente `App` y configura i18n (internacionalización).
+
+### **App.js**
+Componente principal que:
+- Configura **React Router** con rutas públicas y protegidas
+- Inicializa autenticación, tema y lenguaje desde localStorage
+- Define **ProtectedRoute** para rutas que requieren autenticación
+- Configura **ToastContainer** para notificaciones
+- Rutas públicas: `/`, `/login`, `/register`
+- Rutas protegidas: `/dashboard`, `/interviews`, `/interview/:id`, `/subscription`, `/settings`
+
+---
+
+## 🎨 Pages (Páginas)
+
+### **Home.jsx**
+Página de inicio pública con:
+- **Hero section**: Título llamativo y botón de registro
+- **Features**: Muestra características (Voice Interviews, Analytics, Security)
+- **Pricing**: Cards de planes Free y Premium
+- **CTA**: Call-to-action final para registrarse
+- **Footer**: Pie de página con copyright
+
+### **Login.jsx**
+Formulario de inicio de sesión con:
+- Campos: email, password
+- Validación de campos obligatorios
+- Llama a `authService.login()`
+- Guarda token y usuario en localStorage
+- Redirecciona a `/dashboard` tras login exitoso
+- Link a página de registro
+
+### **Register.jsx**
+Formulario de registro con:
+- Campos: firstName, lastName, email, password, language
+- Validación de campos obligatorios
+- Llama a `authService.register()`
+- Crea usuario con suscripción gratuita automática
+- Guarda token y usuario en localStorage
+- Redirecciona a `/dashboard` tras registro
+- Link a página de login
+
+### **Dashboard.jsx**
+Panel principal del usuario autenticado con:
+- **Estadísticas**: Total entrevistas, completadas, score promedio, duración total
+- **Formulario de creación**: Para crear nueva entrevista con IA
+- **Gráficos**: 
+  - LineChart de tendencias de rendimiento
+  - PieChart de entrevistas por profesión
+- **Botones**: Crear entrevista, ver mis entrevistas, descargar reporte
+- Usa hook `useDashboard()` para lógica compleja
+
+### **Interviews.jsx**
+Lista y gestión de entrevistas con:
+- **Lista de entrevistas**: Muestra todas las entrevistas del usuario
+- **Búsqueda**: Filtra por título o profesión
+- **Formulario de creación**: Inline para crear nuevas entrevistas
+- **Generación de IA**: Genera preguntas con Gemini AI
+- **Acciones**: Ver, eliminar entrevistas
+- **Navegación**: A dashboard o a sesión de entrevista específica
+
+### **InterviewSession.jsx**
+Sesión interactiva de entrevista con:
+- **Navegación de preguntas**: Avanza/retrocede entre preguntas
+- **Barra de progreso**: Visual del avance
+- **Reconocimiento de voz**: 
+  - Usa Web Speech API (SpeechRecognition)
+  - Graba respuestas por voz en tiempo real
+  - Confirmar o reintentar respuestas
+- **Temporizadores**: Tiempo por pregunta y tiempo total
+- **Guardado de respuestas**: Envía al backend para evaluación con IA
+- **Completar entrevista**: Cambia estado a "completed"
+- **Modo lectura**: Si está completada, solo muestra respuestas
+
+### **Settings.jsx**
+Configuración de usuario con:
+- **Actualizar perfil**: firstName, lastName, profession
+- **Cambiar contraseña**: currentPassword, newPassword, confirmPassword
+- **Cambiar idioma**: EN, ES, FR, DE
+- **Estado de suscripción**: Muestra plan actual (Free/Premium)
+- **Planes disponibles**: Cards con features de cada plan
+- **Botón upgrade**: Para cambiar a Premium
+- GET inicial de usuario desde backend al cargar
+
+### **Subscription.jsx**
+Gestión de suscripciones con:
+- **Muestra planes**: Free vs Premium con features
+- **Comparación visual**: ✓ ✗ para features incluidas/no incluidas
+- **Upgrade a Premium**: Crea pago con PayPal y redirecciona
+- **Cancelar suscripción**: Cancela plan Premium
+- **Estado actual**: Resalta plan activo
+- **Fecha de expiración**: Si aplica
+
+---
+
+## 🧩 Components (Componentes)
+
+### **Header.jsx**
+Barra de navegación con:
+- **Logo**: Clickeable para ir a home/dashboard
+- **Menú autenticado**: 
+  - Botones a Interviews, Settings
+  - Selector de idioma
+  - Toggle de tema (dark/light)
+- **Menú no autenticado**: 
+  - Selector de idioma
+  - Toggle de tema
+  - Botones Login y Register
+- **Menú móvil**: Hamburger menu responsive
+- Usa hook `useHeader()`
+
+### **StatCard.jsx**
+Tarjeta de estadística reutilizable:
+- Props: title, value, icon, color, isDark
+- Muestra un valor numérico con icono y color personalizado
+- Soporta modo claro/oscuro
+
+---
+
+## 🪝 Hooks (Custom Hooks)
+
+### **useDashboard.jsx**
+Lógica del Dashboard:
+- `fetchStats()`: Obtiene estadísticas del usuario
+- `fetchTrends()`: Obtiene tendencias de rendimiento
+- `handleCreateInterview()`: 
+  - Genera preguntas con IA si es tipo "ai_generated"
+  - Crea entrevista en backend
+  - Redirecciona a sesión de entrevista
+- `downloadReport()`: (Premium) Descarga reporte
+- `toggleCreateForm()`: Muestra/oculta formulario
+- Estados: stats, trends, loading, formData, showCreateForm
+
+### **useHeader.jsx**
+Lógica del Header:
+- `handleLanguageChange()`: Cambia idioma y actualiza i18n
+- `handleThemeToggle()`: Toggle entre dark/light mode
+- `toggleMobileMenu()`: Abre/cierra menú móvil
+- `navigateTo()`: Navega a ruta y cierra menú
+- Estados: mobileMenuOpen, isAuthenticated, isDark, language
+
+### **useHome.jsx**
+Lógica de la página Home:
+- Define features del producto
+- Define planes Free y Premium
+- `navigateToRegister()`: Navega a registro
+- Detecta si usuario está autenticado
+
+---
+
+## 🔌 API (Servicios)
+
+### **api.js**
+Cliente Axios configurado:
+- BaseURL desde env var o localhost:5001
+- **Request interceptor**: Añade token JWT automáticamente
+- **Response interceptor**: Maneja errores globalmente
+- Logs de peticiones y respuestas
+
+### **index.js (api)**
+Servicios exportados organizados:
+
+#### **authService**
+- `register()` - POST /auth/register
+- `login()` - POST /auth/login
+- `getMe()` - GET /auth/me
+- `updateProfile()` - PUT /auth/profile
+- `changePassword()` - PUT /auth/change-password
+- `logout()` - Limpia localStorage
+
+#### **interviewService**
+- `generateQuestions()` - POST /interviews/generate-questions (con IA)
+- `createInterview()` - POST /interviews
+- `getInterviews()` - GET /interviews
+- `getInterview(id)` - GET /interviews/:id
+- `updateInterviewStatus(id)` - PUT /interviews/:id/status
+- `deleteInterview(id)` - DELETE /interviews/:id
+
+#### **responseService**
+- `submitResponse()` - POST /responses
+- `getResponses(interviewId)` - GET /responses/interview/:id
+- `getResponse(id)` - GET /responses/:id
+- `updateResponse(id)` - PUT /responses/:id
+
+#### **statsService**
+- `getUserStats()` - GET /stats
+- `getInterviewStats(id)` - GET /stats/interview/:id
+- `getPerformanceTrends()` - GET /stats/trends
+
+#### **subscriptionService**
+- `createPayment()` - POST /subscriptions/create-payment
+- `executePayment()` - POST /subscriptions/execute-payment
+- `getSubscription()` - GET /subscriptions
+- `checkPremiumAccess()` - GET /subscriptions/premium/check
+- `cancelSubscription()` - DELETE /subscriptions
+
+#### **aiService**
+- `transcribeAudio()` - POST /ai/transcribe (audio a texto)
+- `getNextQuestion()` - POST /ai/next-question
+- `evaluateResponse()` - POST /ai/evaluate-response
+
+---
+
+## 🗂️ Store (Estado Global con Zustand)
+
+### **index.js (store)**
+Stores de Zustand para estado global:
+
+#### **useAuthStore**
+- Estados: user, token, isLoading, error
+- Acciones: setUser, setToken, login, logout, initializeAuth
+- Persiste token y user en localStorage
+
+#### **useInterviewStore**
+- Estados: interviews, currentInterview, isLoading, error
+- Acciones: setInterviews, addInterview, updateInterview, removeInterview
+- Gestión de lista de entrevistas
+
+#### **useThemeStore**
+- Estados: isDark
+- Acciones: toggleTheme, initializeTheme
+- Persiste tema en localStorage
+- Aplica clase 'dark' al html
+
+#### **useLanguageStore**
+- Estados: language
+- Acciones: setLanguage, initializeLanguage
+- Persiste idioma en localStorage
+
+#### **useSubscriptionStore**
+- Estados: subscription, isPremium, isLoading, error
+- Acciones: setSubscription, setIsPremium
+- Gestión de estado de suscripción
+
+### **Header.js (store)** ⚠️
+Archivo legacy/duplicado que parece ser un componente Header alternativo con lógica mezclada. Probablemente no se usa actualmente ya que existe `Header.jsx` en components.
+
+---
+
+## 🌐 i18n (Internacionalización)
+
+### **config.js**
+Configuración de i18next:
+- Soporta 4 idiomas: EN, ES, FR, DE
+- Archivos de traducción: `en.json`, `es.json`, `fr.json`, `de.json`
+- Idioma por defecto: inglés
+- Fallback: inglés
+- Carga idioma guardado en localStorage
+
+---
+
+## 🎯 Flujo Principal de Usuario
+
+### 1️⃣ **Registro/Login**
+```
+Home → Register → Backend crea usuario + suscripción free → Dashboard
+```
+
+### 2️⃣ **Crear Entrevista**
+```
+Dashboard → Formulario crear entrevista → 
+  Si AI: genera preguntas con Gemini → 
+  Backend crea entrevista → 
+  Redirecciona a InterviewSession
+```
+
+### 3️⃣ **Realizar Entrevista**
+```
+InterviewSession → 
+  Por cada pregunta:
+    - Responder por texto o voz (Speech Recognition)
+    - Guardar respuesta → Backend evalúa con IA
+  → Completar entrevista → 
+  Backend calcula score final
+```
+
+### 4️⃣ **Ver Estadísticas**
+```
+Dashboard → Muestra:
+  - Total entrevistas
+  - Score promedio
+  - Gráficos de tendencias
+  - Distribución por profesión
+```
+
+### 5️⃣ **Upgrade Premium**
+```
+Settings/Subscription → 
+  Crear pago PayPal → 
+  Redirección a PayPal → 
+  Usuario aprueba → 
+  Backend ejecuta pago → 
+  Usuario Premium
+```
+
+---
+
+## 🎨 Características Destacadas
+
+### 🎤 **Reconocimiento de Voz**
+- Usa **Web Speech API** (Chrome/Edge)
+- Transcripción en tiempo real
+- Idioma configurable (español por defecto en código)
+- Botón micrófono para iniciar/detener
+- Confirmar o reintentar respuesta
+
+### 🌙 **Dark Mode**
+- Toggle en Header
+- Persiste en localStorage
+- Aplica a todos los componentes
+- Clases CSS condicionales
+
+### 🌍 **Multi-idioma**
+- 4 idiomas soportados
+- Cambio dinámico sin recargar
+- Persiste selección
+- Traducciones con i18next
+
+### 📊 **Gráficos Interactivos**
+- Usa **Recharts**
+- LineChart para tendencias
+- PieChart para distribución
+- Responsive y con tooltips
+
+### 🔐 **Autenticación**
+- JWT tokens
+- Protected routes
+- Auto-inicialización desde localStorage
+- Refresh de token (si aplica)
+
+### 💳 **Pagos con PayPal**
+- Integración PayPal API
+- Flujo: Create Payment → Redirect → Execute Payment
+- Sandbox/Production configurable
+
+---
+
+## 📦 Tecnologías Clave
+
+- **React 18**: Framework principal
+- **React Router DOM**: Navegación SPA
+- **Zustand**: Estado global ligero
+- **Axios**: Cliente HTTP
+- **i18next**: Internacionalización
+- **Recharts**: Gráficos
+- **React Toastify**: Notificaciones
+- **React Icons**: Iconografía
+- **Web Speech API**: Reconocimiento de voz
+- **Tailwind CSS** + **CSS Modules**: Estilos
+
+---
+
+## 🔧 Mejoras Sugeridas
+
+1. **Unificar Header**: Eliminar `Header.js` duplicado en store
+2. **Error Boundary**: Añadir para capturar errores de React
+3. **Loading States**: Unificar spinners con componente reutilizable
+4. **Validación Forms**: Usar librería como Formik o React Hook Form
+5. **Tests**: Añadir tests unitarios con Jest/RTL
+6. **PWA**: Configurar Service Worker para uso offline
+7. **Optimización**: Lazy loading de rutas con React.lazy()
+8. **Accesibilidad**: Mejorar ARIA labels y navegación por teclado
